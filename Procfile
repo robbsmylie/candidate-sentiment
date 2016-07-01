@@ -1,1 +1,1 @@
-web:    java -cp target\candidate-sentiment-0.0.1-SNAPSHOT\WEB-INF\classes;target\candidate-sentiment-0.0.1-SNAPSHOT\WEB-INF\lib\* org.smylie.spike.candidatesentiment.CandidateSentimentConfiguration
+web: java -Dserver.port=$PORT -jar  target/candidate-sentiment-0.0.1-SNAPSHOT.war
