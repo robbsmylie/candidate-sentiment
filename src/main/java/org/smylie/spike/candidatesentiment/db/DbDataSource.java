@@ -1,24 +1,21 @@
-package org.smylie.spike.candidatesentiment;
+package org.smylie.spike.candidatesentiment.db;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
-public class CandidateSentimentConfiguration {
+@Configuration
+public class DbDataSource {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CandidateSentimentConfiguration.class, args);
-    }
-
-    /*
 	@Bean
 	public BasicDataSource dataSource() throws URISyntaxException {
-		URI dbUri = new URI(System.getenv("DATABASE_URL"));
+		
+		String databaseUrlProperty = System.getenv("DATABASE_URL");
+		System.out.println("database url="+databaseUrlProperty);
+		URI dbUri = new URI(databaseUrlProperty);
 
 		String username = dbUri.getUserInfo().split(":")[0];
 		String password = dbUri.getUserInfo().split(":")[1];
@@ -31,6 +28,4 @@ public class CandidateSentimentConfiguration {
 
 		return basicDataSource;
 	}
-	*/
-
 }
