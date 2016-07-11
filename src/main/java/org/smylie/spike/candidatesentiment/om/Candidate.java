@@ -1,25 +1,41 @@
 package org.smylie.spike.candidatesentiment.om;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-
-@Repository
 public class Candidate {
 
-	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		System.out.println("setting datasource for template");
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	private int candidateKey;
+	private String firstName = null;
+	private String lastName = null;
+	private String searchTerm = null;
+	
+	public int getCandidateKey() {
+		return candidateKey;
 	}
 
-	public int getNumberOfCandidates() {
-		int rowCount = this.jdbcTemplate.queryForObject("select count(*) from candidate", Integer.class);
-		return rowCount;
+	public void setCandidateKey(int candidateKey) {
+		this.candidateKey = candidateKey;
 	}
 
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getSearchTerm() {
+		return searchTerm;
+	}
+
+	public void setSearchTerm(String searchTerm) {
+		this.searchTerm = searchTerm;
+	}
 }
