@@ -24,7 +24,7 @@ public class GraphDataDao {
 	
 	public List<GraphData> getOverallSentimentByCandidate() {
 		
-		List<GraphData> data = this.jdbcTemplate.query( "select avg(case when candidate_key=1 then sentiment::float end) as clinton,avg(case when candidate_key=2 then sentiment::float end) as trump,date_trunc('day',measurement_date) as date from sentiment_measurement group by date", new SentimentByCandidateMapper());
+		List<GraphData> data = this.jdbcTemplate.query( "select avg(case when candidate_key=1 then sentiment::float end) as clinton,avg(case when candidate_key=2 then sentiment::float end) as trump,date_trunc('day',measurement_date) as date from sentiment_measurement group by date order by date", new SentimentByCandidateMapper());
 		
 		return data;
 	}
