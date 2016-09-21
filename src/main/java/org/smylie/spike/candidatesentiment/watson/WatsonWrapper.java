@@ -1,7 +1,6 @@
-package org.smylie.spike.watson;
+package org.smylie.spike.candidatesentiment.watson;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -9,6 +8,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -16,6 +17,8 @@ import com.jayway.jsonpath.JsonPath;
  * Sentiment Analysis doc: https://www.alchemyapi.com/api/sentiment/proc.html
  *
  */
+
+@Component
 public class WatsonWrapper 
 {
 	public static String baseUrl = "http://gateway-a.watsonplatform.net/";
@@ -25,8 +28,12 @@ public class WatsonWrapper
 	public static String apiConceptsUrl = "calls/url/URLGetRankedConcepts?outputMode=json&apikey=$APIKEY&url=$URL&knowledgeGraph=1";
 	public static String apiKeywordsUrl = "calls/url/URLGetRankedKeywords?outputMode=json&apikey=$APIKEY&url=$URL&sentiment=1";
 	
-	public static String apiKey = "6e2c73e094df57ebe655eab852cc3feb475e9d2b";
-
+	@Value("${WATSON_API_KEY}")
+	private String apiKey;
+	public void setApiKey(String key) {
+		apiKey = key;
+	}
+	
 	public WatsonResponse callSentimentAnalysisService(String url, String keyPhrase) {
 
 		String resultJson = null;

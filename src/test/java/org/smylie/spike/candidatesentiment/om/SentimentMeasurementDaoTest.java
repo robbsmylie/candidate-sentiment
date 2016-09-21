@@ -8,7 +8,7 @@ import java.util.Random;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.smylie.spike.candidatesentiment.CandidateSentimentConfiguration;
-import org.smylie.spike.watson.WatsonWrapper;
+import org.smylie.spike.candidatesentiment.watson.WatsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,6 +16,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Unit test for simple App.
+ * 
+ * For this test to work, the DATABASE_URL environment variable must be set.
+ * I set this in my run configuration for this class in Eclipse.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(CandidateSentimentConfiguration.class)

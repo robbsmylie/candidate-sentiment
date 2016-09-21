@@ -9,8 +9,8 @@ import org.smylie.spike.candidatesentiment.om.SentimentMeasurement;
 import org.smylie.spike.candidatesentiment.om.SentimentMeasurementDao;
 import org.smylie.spike.candidatesentiment.om.Website;
 import org.smylie.spike.candidatesentiment.om.WebsiteDao;
-import org.smylie.spike.watson.WatsonResponse;
-import org.smylie.spike.watson.WatsonWrapper;
+import org.smylie.spike.candidatesentiment.watson.WatsonResponse;
+import org.smylie.spike.candidatesentiment.watson.WatsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -43,16 +43,26 @@ public class CalculateSentiment {
 		measurementDao = dao;
 	}
 
+	@Autowired
+	private WatsonWrapper watson;
+	public void setWatsonWrapper(WatsonWrapper wrapper) {
+		watson = wrapper;
+	}
+	
+	/*
 	public static void main(String[] args) {
+		
 		SpringApplication.run(CalculateSentiment.class, args);
 		CalculateSentiment calc = new CalculateSentiment();
 		calc.calculateSentiment();
 	}
+	*/
 
 	public void calculateSentiment() {
+		
 		System.out.println("STARTING CALCULATING SENTIMENT");
 
-		WatsonWrapper watson = new WatsonWrapper();
+		//WatsonWrapper watson = new WatsonWrapper();
 
 		// get all the candidates
 		List<Candidate> candidates = candidateDao.getAllCandidates();

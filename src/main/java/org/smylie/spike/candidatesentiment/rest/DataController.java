@@ -1,10 +1,16 @@
 package org.smylie.spike.candidatesentiment.rest;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.smylie.spike.candidatesentiment.om.Candidate;
 import org.smylie.spike.candidatesentiment.om.CandidateDao;
+import org.smylie.spike.candidatesentiment.om.GraphData;
+import org.smylie.spike.candidatesentiment.om.GraphDataDao;
 import org.smylie.spike.candidatesentiment.om.SentimentMeasurement;
 import org.smylie.spike.candidatesentiment.om.SentimentMeasurementDao;
 import org.smylie.spike.candidatesentiment.om.Website;
@@ -28,7 +34,10 @@ public class DataController {
 
 	@Autowired
 	private SentimentMeasurementDao sentimentMeasurementDao;
-	
+
+	@Autowired
+	private GraphDataDao graphDataDao;
+
 	public void setCandidateDao(CandidateDao dao) {
 		candidateDao = dao;
 	}
@@ -41,21 +50,54 @@ public class DataController {
 		sentimentMeasurementDao = dao;
 	}
 
+	public void setGraphDataDao(GraphDataDao dao) {
+		graphDataDao = dao;
+	}
+
 	@RequestMapping(value="/allCandidates",method=RequestMethod.GET)
-    public  @ResponseBody List<Candidate> getAllCandidates() {
+    public @ResponseBody List<Candidate> getAllCandidates() {
         System.out.println("getting all candidates");
         return candidateDao.getAllCandidates();
     }
 
 	@RequestMapping(value="/allWebsites",method=RequestMethod.GET)
-    public  @ResponseBody List<Website> getAllWebsites() {
+    public @ResponseBody List<Website> getAllWebsites() {
         System.out.println("getting all websites");
         return websiteDao.getAllWebsites();
     }
 
 	@RequestMapping(value="/allMeasurements",method=RequestMethod.GET)
-    public  @ResponseBody List<SentimentMeasurement> getAllMeasurements() {
+    public @ResponseBody List<SentimentMeasurement> getAllMeasurements() {
         System.out.println("getting all measurements");
         return sentimentMeasurementDao.getAllSentimentMeasurements();
     }
+
+    @RequestMapping(value="/sentimentDataByDay",method=RequestMethod.GET)
+    public @ResponseBody List<GraphData> sentimentByDay(){
+
+    	List<GraphData> responseList = graphDataDao.getOverallSentimentByCandidate();
+    	
+    	/*
+    	ArrayList<GraphData> responseList = new ArrayList();
+		Random rand = new Random();
+    	    	
+    	for(int i=0; i<20; i++) {
+    		
+        	GregorianCalendar cal = new GregorianCalendar();
+    		cal.add(GregorianCalendar.DAY_OF_MONTH, -i);
+    		SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yy");	
+    		
+    		GraphData resp = new GraphData();
+    		resp.put("date", format1.format(cal.getTime()));
+    		resp.put("clinton",(rand.nextDouble() * 2 - 1));
+    		resp.put("trump",(rand.nextDouble() * 2 - 1));
+    		
+    		responseList.add(resp);
+    	}
+    	*/
+
+    	return responseList;
+    }
+
+
 }

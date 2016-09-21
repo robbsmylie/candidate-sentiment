@@ -1,13 +1,10 @@
 package org.smylie.spike.candidatesentiment.rest;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.smylie.spike.candidatesentiment.CalculateSentiment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -16,6 +13,7 @@ public class CalculateSentimentController {
 
 	@Autowired
 	CalculateSentiment calc = null;
+	
 	public void setCalculateSentiment(CalculateSentiment calculateSentiment) {
 		calc = calculateSentiment;
 	}
