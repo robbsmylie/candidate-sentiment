@@ -86,6 +86,7 @@ public class DataController {
         	GregorianCalendar cal = new GregorianCalendar();
     		cal.add(GregorianCalendar.DAY_OF_MONTH, -i);
     		SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yy");	
+    		//SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");	
     		
     		GraphData resp = new GraphData();
     		resp.put("date", format1.format(cal.getTime()));
@@ -94,8 +95,8 @@ public class DataController {
     		
     		responseList.add(resp);
     	}
-    	*/
-
+		*/
+    	
     	return responseList;
     }
 

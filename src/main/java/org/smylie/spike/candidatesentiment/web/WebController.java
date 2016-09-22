@@ -2,6 +2,7 @@ package org.smylie.spike.candidatesentiment.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class WebController {
@@ -16,7 +17,7 @@ public class WebController {
         return "sentimentgraph";
     }
 
-    @RequestMapping("/data")
+    @RequestMapping(value="/data", method = RequestMethod.GET, produces = "application/json")
     String data(){
         return "data";
     }

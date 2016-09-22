@@ -2,6 +2,7 @@ package org.smylie.spike.candidatesentiment.om;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -32,10 +33,14 @@ public class GraphDataDao {
 	private static final class SentimentByCandidateMapper implements RowMapper<GraphData> {
 
 	    public GraphData mapRow(ResultSet rs, int rowNum) throws SQLException {
-	        GraphData data = new GraphData();
+
+    		SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yy");
+	    	
+	    	GraphData data = new GraphData();
 	        data.put("clinton",rs.getFloat("clinton"));
 	        data.put("trump",rs.getFloat("trump"));
-	        data.put("date",rs.getDate("date"));
+	        //data.put("date",rs.getDate("date"));
+	        data.put("date",format1.format(rs.getDate("date")));
 	        return data;
 	    }
 	}
