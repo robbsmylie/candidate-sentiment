@@ -1,6 +1,7 @@
 package org.smylie.spike.candidatesentiment.watson;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -9,7 +10,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -22,11 +28,11 @@ import com.jayway.jsonpath.JsonPath;
 public class WatsonWrapper 
 {
 	public static String baseUrl = "http://gateway-a.watsonplatform.net/";
-	public static String apiSentimentAnalysisUrl = "calls/url/URLGetTargetedSentiment?outputMode=json&apikey=$APIKEY&url=$URL&targets=$TARGET";
-	public static String apiEntitiesUrl = "calls/url/URLGetRankedNamedEntities?outputMode=json&apikey=$APIKEY&url=$URL";
-	public static String apiTaxonomyUrl = "calls/url/URLGetRankedTaxonomy?outputMode=json&apikey=$APIKEY&url=$URL";
-	public static String apiConceptsUrl = "calls/url/URLGetRankedConcepts?outputMode=json&apikey=$APIKEY&url=$URL&knowledgeGraph=1";
-	public static String apiKeywordsUrl = "calls/url/URLGetRankedKeywords?outputMode=json&apikey=$APIKEY&url=$URL&sentiment=1";
+	public static String apiSentimentAnalysisBaseUrl = "calls/url/URLGetTargetedSentiment";
+	public static String apiEntitiesBaseUrl = "calls/url/URLGetRankedNamedEntities";
+	public static String apiTaxonomyBaseUrl = "calls/url/URLGetRankedTaxonomy";
+	public static String apiConceptsBaseUrl = "calls/url/URLGetRankedConcepts";
+	public static String apiKeywordsBaseUrl = "calls/url/URLGetRankedKeywords";
 	
 	@Value("${WATSON_API_KEY}")
 	private String apiKey;
@@ -34,17 +40,20 @@ public class WatsonWrapper
 		apiKey = key;
 	}
 	
-	public WatsonResponse callSentimentAnalysisService(String url, String keyPhrase) {
+	public WatsonResponse callSentimentAnalysisService(String targetUrl, String keyPhrase) {
 
 		String resultJson = null;
 
 		// setup the url
-		String urlCall = baseUrl+apiSentimentAnalysisUrl;
-		urlCall = replaceArgument(urlCall,"$APIKEY",apiKey);
-		urlCall = replaceArgument(urlCall,"$URL",url);
-		urlCall = replaceArgument(urlCall,"$TARGET",keyPhrase);
-
-		resultJson = executeCall(urlCall);
+		String urlCall = baseUrl+apiSentimentAnalysisBaseUrl;
+		
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(urlCall)
+		        .queryParam("outputMode", "json")
+		        .queryParam("url", targetUrl)
+		        .queryParam("targets", keyPhrase)
+		        .queryParam("apikey", apiKey);
+		
+		resultJson = executeCall(urlBuilder.build().encode().toUri());
 		
 		System.out.println("sentiment result: "+resultJson);
 		
@@ -54,7 +63,7 @@ public class WatsonWrapper
 		response.put("status", status);
 		if(status.equals("ERROR")) {
 			// do something
-			System.out.println("Error when calling url: "+url);
+			System.out.println("Error when calling url: "+targetUrl);
 			System.out.println("Response was: "+resultJson);					
 			return response;
 		}
@@ -74,98 +83,88 @@ public class WatsonWrapper
 		return response;
 	}
 
-	public String callEntitiesService(String url) {
+	
+	public String callEntitiesService(String targetUrl) {
 
 		String result = null;
 
 		// setup the url
-		String urlCall = baseUrl+apiEntitiesUrl;
-		urlCall = replaceArgument(urlCall,"$APIKEY",apiKey);
-		urlCall = replaceArgument(urlCall,"$URL",url);
+		String urlCall = baseUrl+apiEntitiesBaseUrl;
 
-		result = executeCall(urlCall);
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(urlCall)
+		        .queryParam("outputMode", "json")
+		        .queryParam("url", targetUrl)
+		        .queryParam("apikey", apiKey);
+
+		result = executeCall(urlBuilder.build().encode().toUri());
 		
 		System.out.println("entities result: "+result);
 		return result;
 	}
 
-	public String callTaxonomyService(String url) {
+	public String callTaxonomyService(String targetUrl) {
 
 		String result = null;
 
 		// setup the url
-		String urlCall = baseUrl+apiTaxonomyUrl;
-		urlCall = replaceArgument(urlCall,"$APIKEY",apiKey);
-		urlCall = replaceArgument(urlCall,"$URL",url);
+		String urlCall = baseUrl+apiTaxonomyBaseUrl;
 
-		result = executeCall(urlCall);
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(urlCall)
+		        .queryParam("outputMode", "json")
+		        .queryParam("url", targetUrl)
+		        .queryParam("apikey", apiKey);
+
+		result = executeCall(urlBuilder.build().encode().toUri());
 		
 		System.out.println("entities result: "+result);
 		return result;
 	}
 
-	public String callConceptsService(String url) {
+	public String callConceptsService(String targetUrl) {
 
 		String result = null;
 
 		// setup the url
-		String urlCall = baseUrl+apiConceptsUrl;
-		urlCall = replaceArgument(urlCall,"$APIKEY",apiKey);
-		urlCall = replaceArgument(urlCall,"$URL",url);
+		String urlCall = baseUrl+apiConceptsBaseUrl;
 
-		result = executeCall(urlCall);
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(urlCall)
+		        .queryParam("outputMode", "json")
+		        .queryParam("knowledgeGraph", "1")
+		        .queryParam("url", targetUrl)
+		        .queryParam("apikey", apiKey);
+
+		result = executeCall(urlBuilder.build().encode().toUri());
 		
 		System.out.println("entities result: "+result);
 		return result;
 	}
 
-	public String callKeywordsService(String url) {
+	public String callKeywordsService(String targetUrl) {
 
 		String result = null;
 
 		// setup the url
-		String urlCall = baseUrl+apiKeywordsUrl;
-		urlCall = replaceArgument(urlCall,"$APIKEY",apiKey);
-		urlCall = replaceArgument(urlCall,"$URL",url);
+		String urlCall = baseUrl+apiKeywordsBaseUrl;
 
-		result = executeCall(urlCall);
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(urlCall)
+		        .queryParam("outputMode", "json")
+		        .queryParam("sentiment", "1")
+		        .queryParam("url", targetUrl)
+		        .queryParam("apikey", apiKey);
+
+		result = executeCall(urlBuilder.build().encode().toUri());
 		
 		System.out.println("entities result: "+result);
-		return result;
-	}
-
-	public String executeCall(String urlCall) {
-
-		// call the service
-		String result = null;
-		CloseableHttpResponse response1 = null;
-		try {
-			System.out.println("calling url"+urlCall);
-			CloseableHttpClient httpclient = HttpClients.createDefault();
-			HttpGet httpGet = new HttpGet(urlCall);
-			response1 = httpclient.execute(httpGet);
-			result = EntityUtils.toString(response1.getEntity());
-		}
-		catch(ClientProtocolException e) {
-			//TODO - something
-		}
-		catch(IOException e) {
-			//TODO - something			
-		}
-		finally {
-			try {
-				response1.close();
-			}
-			catch(IOException e) {
-				
-			}
-		}
-
 		return result;
 	}
 	
-	public String replaceArgument(String url, String arg, String val) {
+	public String executeCall(URI uri) {
 
-		return url.replace(arg,val);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.getForEntity(
+		        uri, 
+		        String.class);
+		
+		return response.getBody();
 	}
 }
