@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: containerregistryrsmylie.azurecr.io
+        username: ${{ secrets.acr_containerregistryrsmylie_username }}
+        password: ${{ secrets.acr_containerregistryrsmylie_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "./Dockerfile" -t containerregistryrsmylie.azurecr.io/sentimentclusterqa:${{ github.sha }}
+        docker push containerregistryrsmylie.azurecr.io/sentimentclusterqa:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_sentimentclusterqa_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep sentimentclusterqae138 | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace sentimentclusterqae138`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: sentimentclusterqae138
+        container-registry-url: containerregistryrsmylie.azurecr.io
+        container-registry-username: ${{ secrets.acr_containerregistryrsmylie_username }}
+        container-registry-password: ${{ secrets.acr_containerregistryrsmylie_password }}
+        secret-name: sentimentcludockerauth
+       
+    - uses: azure/k8s-deploy@v1
+      with:
+        namespace: sentimentclusterqae138
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          containerregistryrsmylie.azurecr.io/sentimentclusterqa:${{ github.sha }}
+        imagepullsecrets: |
+          sentimentcludockerauth
